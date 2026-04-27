@@ -1,4 +1,4 @@
-#include <windows.h>
+﻿#include <windows.h>
 #include <iostream>
 #include <fstream>
 #include <sstream>
@@ -14,16 +14,14 @@ using namespace std::chrono;
 using namespace std::filesystem;
 
 int main() {
-    //setlocale(LC_ALL, "RU");
     SetConsoleCP(1251);
     SetConsoleOutputCP(1251);
 
-    // Ñîçäà¸ì ôàéë çàïðîñîâ, åñëè åãî íåò
     fstream("f1.txt", ios::app).close();
 
     fstream file("f1.txt", ios::in | ios::binary);
     if (!file.is_open()) {
-        cerr << "Íå óäàëîñü îòêðûòü ôàéë f1.txt" << endl;
+        cerr << "Не удалось открыть файл f1.txt" << endl;
         return 1;
     }
 
@@ -32,15 +30,15 @@ int main() {
     file.seekg(0, ios::end);
     oldSize = file.tellg();
 
-    std::cout << "Ñåðâåð çàïóùåí. Îæèäàíèå çàïðîñîâ..." << endl;
+    std::cout << "Сервер запущен. Ожидание запросов..." << endl;
 
-    while (key != 27) { // 27 — êîä Esc
+    while (key != 27) { // 27 — код Esc
         file.clear();
         file.seekg(0, ios::end);
         streamsize newSize = file.tellg();
 
         if (newSize > oldSize) {
-            // Ïîÿâèëèñü íîâûå äàííûå
+            // Появились новые данные
             file.seekg(oldSize);
             string line;
             (getline(file, line)); {
@@ -49,7 +47,7 @@ int main() {
                 string surname;
                 int g[4];
                 if (iss >> surname >> g[0] >> g[1] >> g[2] >> g[3]) {
-                    std::cout << "Ïîëó÷åí çàïðîñ: " << surname << " "
+                    std::cout << "Получен запрос: " << surname << " "
                         << g[0] << " " << g[1] << " " << g[2] << " " << g[3] << endl;
 
                     string response;
@@ -61,32 +59,32 @@ int main() {
                         }
                     }
                     if (minGrade < 3) {
-                        response = format("Åñòü çàäîëæåííîñòè. Ñðåäíèé áàëë: {}. Ñòèïåíäèè íåò.", avg);
+                        response = format("Есть задолженности. Средний балл: {}. Стипендии нет.", avg);
                     }
                     else if (minGrade == 3) {
-                        response = format("Çàäîëæåííîñòåé íåò. Áàëë: {}. Ñòèïåíäèè íåò.", avg);
+                        response = format("Задолженностей нет. Балл: {}. Стипендии нет.", avg);
                     }
                     else if (minGrade == 4) {
-                        response = format("Çàäîëæåííîñòåé íåò. Áàëë: {}. Ñòèïåíäèÿ: 2200ð.", avg);
+                        response = format("Задолженностей нет. Балл: {}. Стипендия: 2200р.", avg);
                     }
                     else {
-                        response = format("Çàäîëæåííîñòåé íåò. Áàëë: {}. Ñòèïåíäèÿ: 3300ð.", avg);
+                        response = format("Задолженностей нет. Балл: {}. Стипендия: 3300р.", avg);
                     }
 
                     string filename = format("{}.txt", surname);
-                    ofstream result(filename); // ïåðåçàïèñûâàåì ôàéë îòâåòà
+                    ofstream result(filename); // перезаписываем файл ответа
                     if (result.is_open()) {
                         result << response << endl;
                         result.close();
-                        std::cout << "Îòâåò çàïèñàí â " << filename << endl << endl;
+                        std::cout << "Ответ записан в " << filename << endl << endl;
                     }
                 }
                 else {
-                    cerr << "Íåêîððåêòíàÿ ñòðîêà: " << line << endl << endl;
+                    cerr << "Некорректная строка: " << line << endl << endl;
                 }
             }
             oldSize = file.tellg();
-            if (!file) file.clear(); // ñáðîñ eof è îøèáîê
+            if (!file) file.clear(); // сброс eof и ошибок
         }
 
         if (_kbhit()) {
@@ -96,6 +94,6 @@ int main() {
     }
 
     file.close();
-    std::cout << "Ñåðâåð çàâåðøèë ðàáîòó." << endl;
+    std::cout << "Сервер завершил работу." << endl;
     return 0;
 }
