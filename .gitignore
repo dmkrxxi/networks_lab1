@@ -7,10 +7,14 @@ cmake-build-*/
 *.user
 *.suo
 
+.vscode/
+
 # Compiled files
 *.exe
 *.obj
 *.pdb
+*.out
+*.app
 
 # CMake cache
 CMakeCache.txt
